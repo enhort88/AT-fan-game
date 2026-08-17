@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f6ce5e" />
+  <title>Ууу: Потерянные страницы</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="hud">
+      <div class="brand">
+        <div class="fan-label">НЕОФИЦИАЛЬНАЯ ФАН-ИГРА</div>
+        <div class="title">Ууу: Потерянные страницы</div>
+      </div>
+
+      <div class="hud-center">
+        <div class="pages">
+          <span class="pages-icon">📖</span>
+          <strong id="pagesCounter">0 / 8</strong>
+        </div>
+        <div class="progress"><div id="progressFill"></div></div>
+      </div>
+
+      <div class="hud-actions">
+        <button id="inventoryBtn" class="icon-btn" title="Инвентарь">🎒</button>
+        <button id="journalBtn" class="icon-btn" title="Задания">📜</button>
+        <button id="helpBtn" class="icon-btn" title="Помощь">?</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="scene" class="scene">
+        <div class="scene-sky"></div>
+        <div class="scene-ground"></div>
+        <div id="sceneDecor" class="scene-decor"></div>
+
+        <div class="scene-heading">
+          <div id="sceneKicker" class="scene-kicker"></div>
+          <h1 id="sceneTitle"></h1>
+          <p id="sceneDescription"></p>
+        </div>
+
+        <div id="hotspots" class="hotspots"></div>
+
+        <div class="scene-footer">
+          <button id="prevSceneBtn" class="nav-btn">←</button>
+          <button id="mapBtn" class="map-btn">🗺 Карта Ууу</button>
+          <button id="nextSceneBtn" class="nav-btn">→</button>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <div id="modal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop" data-close="1"></div>
+      <div class="modal-card">
+        <button class="modal-close" data-close="1">×</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

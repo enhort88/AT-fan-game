@@ -1,0 +1,7 @@
+services:
+  adventure-quest:
+    build: .
+    container_name: adventure-quest
+    restart: unless-stopped
+    ports:
+      - "8088:80"
