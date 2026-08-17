@@ -41,6 +41,155 @@ const CHAR = {
   flambo:["Фламбо","#e95d43","FL"], kingworm:["Король Червь","#d49f4d","KW"]
 };
 
+/* ---------- CHARACTER PORTRAITS (stylised SVG, not exact likenesses) ---------- */
+
+function svgTag(inner){return `<svg viewBox="0 0 100 100" class="face-svg" aria-hidden="true">${inner}</svg>`}
+function baseSkin(color,rx=44,ry=44,cx=50,cy=54){return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${color}"/>`}
+
+function eyesSVG(kind,color="#26303e",cx1=37,cx2=63,cy=56){
+  switch(kind){
+    case "dots": return `<circle cx="${cx1}" cy="${cy}" r="5.4" fill="${color}"/><circle cx="${cx2}" cy="${cy}" r="5.4" fill="${color}"/>`;
+    case "big": return `<circle cx="${cx1}" cy="${cy}" r="8" fill="${color}"/><circle cx="${cx2}" cy="${cy}" r="8" fill="${color}"/><circle cx="${cx1-2}" cy="${cy-2}" r="2" fill="#fff"/><circle cx="${cx2-2}" cy="${cy-2}" r="2" fill="#fff"/>`;
+    case "red": return eyesSVG("dots","#df4a42",cx1,cx2,cy);
+    case "closed": return `<path d="M${cx1-6} ${cy} q6 6 12 0" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M${cx2-6} ${cy} q6 6 12 0" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    case "x": return `<path d="M${cx1-5} ${cy-5}l10 10M${cx1+5} ${cy-5}l-10 10" stroke="${color}" stroke-width="3" stroke-linecap="round"/><path d="M${cx2-5} ${cy-5}l10 10M${cx2+5} ${cy-5}l-10 10" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`;
+    case "single": return `<circle cx="50" cy="${cy}" r="10" fill="${color}"/><circle cx="50" cy="${cy}" r="4" fill="#fff"/>`;
+    case "ring": return `<circle cx="${cx1}" cy="${cy-2}" r="11" fill="#fff"/><circle cx="${cx2}" cy="${cy-2}" r="11" fill="#fff"/><circle cx="${cx1}" cy="${cy-2}" r="5" fill="${color}"/><circle cx="${cx2}" cy="${cy-2}" r="5" fill="${color}"/>`;
+    default: return "";
+  }
+}
+function mouthSVG(kind,color="#26303e"){
+  switch(kind){
+    case "smile": return `<path d="M40 68 Q50 76 60 68" stroke="${color}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+    case "grin": return `<path d="M36 66 Q50 80 64 66 Q50 74 36 66Z" fill="${color}" opacity=".85"/>`;
+    case "flat": return `<line x1="42" y1="70" x2="58" y2="70" stroke="${color}" stroke-width="3.2" stroke-linecap="round"/>`;
+    case "open": return `<ellipse cx="50" cy="71" rx="7" ry="5" fill="${color}"/>`;
+    case "fangs": return `${mouthSVG("smile",color)}<path d="M44 68l3 7 3-6z" fill="#fff"/><path d="M56 68l-3 7-3-6z" fill="#fff"/>`;
+    case "beak": return `<path d="M39 65 L61 65 L50 80 Z" fill="#f0a53c"/>`;
+    case "snout": return `<ellipse cx="50" cy="69" rx="13" ry="8" fill="#000" opacity=".1"/><circle cx="45" cy="69" r="2" fill="#26303e"/><circle cx="55" cy="69" r="2" fill="#26303e"/>`;
+    default: return "";
+  }
+}
+function topperSVG(kind,color="#fff",accent="#000"){
+  switch(kind){
+    case "stripes": return `<path d="M16 32 L38 10 M30 44 L58 16 M46 52 L76 22 M62 56 L86 32" stroke="${color}" stroke-width="6" stroke-linecap="round" opacity=".85"/>`;
+    case "bananacap": return `<path d="M12 40 Q10 10 40 6 Q70 2 88 30 Q60 18 40 24 Q22 30 12 40Z" fill="${color}"/>`;
+    case "swirl": return `<path d="M50 8 a15 15 0 1 1 -0.1 0" fill="none" stroke="${color}" stroke-width="6"/><path d="M50 16 a7 7 0 1 1 -0.1 0" fill="none" stroke="${color}" stroke-width="5"/>`;
+    case "sprout": return `<path d="M46 16 Q40 4 50 2 Q56 4 54 16 Q50 8 46 16Z" fill="${color}"/>`;
+    case "lumpy": return `<circle cx="20" cy="32" r="10" fill="${color}"/><circle cx="35" cy="16" r="12" fill="${color}"/><circle cx="56" cy="12" r="12" fill="${color}"/><circle cx="75" cy="20" r="11" fill="${color}"/><circle cx="84" cy="38" r="9" fill="${color}"/><path d="M43 8 l3 7 l7-2 l-3 7 l7 2 l-6 4" stroke="${accent}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+    case "elephantears": return `<ellipse cx="15" cy="46" rx="15" ry="20" fill="${color}"/><ellipse cx="85" cy="46" rx="15" ry="20" fill="${color}"/>`;
+    case "pigears": return `<path d="M22 22 Q12 6 30 10 Q31 22 25 30Z" fill="${color}"/><path d="M78 22 Q88 6 70 10 Q69 22 75 30Z" fill="${color}"/>`;
+    case "leafhood": return `<path d="M9 42 Q7 6 50 4 Q93 6 91 42 Q71 22 50 22 Q29 22 9 42Z" fill="${color}"/>`;
+    case "wizardhat": return `<path d="M50 3 L73 40 L27 40 Z" fill="${color}"/><rect x="21" y="38" width="58" height="7" rx="3.5" fill="${color}"/>`;
+    case "feathertuft": return `<path d="M41 10 Q50 -3 59 10 Q53 16 50 25 Q47 16 41 10Z" fill="${color}"/>`;
+    case "mohawk": return `<path d="M45 3 Q50 -4 55 3 L57 28 Q50 23 43 28 Z" fill="${color}"/>`;
+    case "bigbeard": return `<path d="M19 46 Q50 92 81 46 Q77 68 50 76 Q23 68 19 46Z" fill="${color}"/>`;
+    case "hood": return `<path d="M8 46 Q6 4 50 2 Q94 4 92 46 Q75 18 50 18 Q25 18 8 46Z" fill="${color}"/>`;
+    case "owltufts": return `<path d="M31 15 L39 30 L24 27Z" fill="${color}"/><path d="M69 15 L61 30 L76 27Z" fill="${color}"/>`;
+    case "foam": return `<path d="M15 22 a7.5 7.5 0 1 1 15 0 a7.5 7.5 0 1 1 15 0 a7.5 7.5 0 1 1 15 0 a7.5 7.5 0 1 1 15 0 L85 34 L15 34Z" fill="${color}"/>`;
+    case "shell": return `<path d="M8 42 Q50 -2 92 42 Q50 30 8 42Z" fill="${color}"/>`;
+    case "flamespikes": return `<path d="M22 40 Q17 20 27 6 Q28 20 35 13 Q35 26 46 10 Q43 26 54 16 Q52 30 64 12 Q66 26 78 14 Q76 30 79 40Z" fill="${color}"/>`;
+    case "crowngold": return `<path d="M19 34 L25 10 L38 24 L50 6 L62 24 L75 10 L81 34Z" fill="${color}"/><circle cx="50" cy="19" r="3.6" fill="${accent}"/>`;
+    case "unicornmane": return `<path d="M50 3 L58 18 L44 18 Z" fill="#f2f2f2"/><rect x="4" y="24" width="30" height="6" rx="3" fill="#ff8a8a" transform="rotate(-18 19 27)"/><rect x="2" y="34" width="30" height="6" rx="3" fill="#ffd76a" transform="rotate(-8 17 37)"/><rect x="4" y="44" width="30" height="6" rx="3" fill="#7fd8a0" transform="rotate(4 19 47)"/><rect x="8" y="53" width="26" height="6" rx="3" fill="#7fb8ff" transform="rotate(14 21 56)"/>`;
+    case "rim": return `<path d="M15 26 Q50 8 85 26" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+    default: return "";
+  }
+}
+function blushSVG(){return `<ellipse cx="30" cy="63" rx="6.5" ry="3.6" fill="#ff9d9d" opacity=".5"/><ellipse cx="70" cy="63" rx="6.5" ry="3.6" fill="#ff9d9d" opacity=".5"/>`}
+
+const AVATAR = {
+  shelby:{skin:"#e2837f",eyes:"dots",mouth:"flat"},
+  lady:{skin:"#f2d33a",topper:"unicornmane",eyes:"dots",mouth:"smile",blush:true},
+  peppermint:{skin:"#fbf8f2",topper:"stripes",topperColor:"#e6453c",eyes:"dots",mouth:"smile"},
+  banana:{skin:"#eddb54",topper:"bananacap",topperColor:"#f4e24a",eyes:"dots",mouth:"grin"},
+  cinnamon:{skin:"#d5a175",topper:"swirl",topperColor:"#7a4a26",eyes:"dots",mouth:"smile"},
+  starchy:{skin:"#aab48f",topper:"stripes",topperColor:"#7a8a63",eyes:"x",mouth:"flat"},
+  lemonhope:{skin:"#eee68e",topper:"sprout",topperColor:"#8bb04a",eyes:"dots",mouth:"smile",blush:true},
+  mrpig:{skin:"#f0bcc2",topper:"pigears",topperColor:"#e9a5ad",eyes:"dots",mouth:"snout"},
+  huntress:{skin:"#8fcf9c",topper:"leafhood",topperColor:"#4c8f5a",eyes:"dots",mouth:"smile"},
+  magicman:{skin:"#d08cc0",topper:"wizardhat",topperColor:"#7a4fae",eyes:"dots",mouth:"smile"},
+  choosegoose:{skin:"#f5f3e6",topper:"feathertuft",topperColor:"#fff",eyes:"dots",mouth:"beak"},
+  susan:{skin:"#d2b38f",topper:"mohawk",topperColor:"#4aa0c9",eyes:"dots",mouth:"flat"},
+  billy:{skin:"#d2a566",topper:"bigbeard",topperColor:"#f4f1e6",eyes:"dots",mouth:"smile"},
+  cosmicowl:{skin:"#7486ad",topper:"owltufts",topperColor:"#5a6aa8",eyes:"ring",mouth:"beak"},
+  abracadaniel:{skin:"#c39bd1",topper:"wizardhat",topperColor:"#5a4fae",eyes:"dots",mouth:"smile"},
+  rootbeer:{skin:"#a77955",topper:"foam",topperColor:"#fff6df",eyes:"dots",mouth:"smile"},
+  turtle:{skin:"#86b87a",topper:"shell",topperColor:"#5a9c63",eyes:"dots",mouth:"smile"},
+  flambo:{skin:"#e95d43",topper:"flamespikes",topperColor:"#ffcf4d",eyes:"dots",mouth:"open"},
+  kingworm:{skin:"#d49f4d",topper:"crowngold",topperColor:"#e8c250",eyes:"dots",mouth:"smile"},
+  neptr:{skin:"#c7ccd3",topper:"rim",topperColor:"#e3e6ea",eyes:"single",mouth:"flat"}
+};
+
+const BESPOKE = {
+  finn:()=>svgTag(`${baseSkin("#f6efe1")}
+    <circle cx="19" cy="25" r="13" fill="#fff" stroke="#bcd9ea" stroke-width="2"/>
+    <circle cx="81" cy="25" r="13" fill="#fff" stroke="#bcd9ea" stroke-width="2"/>
+    <path d="M9 46 Q7 4 50 4 Q93 4 91 46 Q71 25 50 25 Q29 25 9 46Z" fill="#fff" stroke="#bcd9ea" stroke-width="2"/>
+    <rect x="31" y="30" width="38" height="9" rx="4.5" fill="#eaf6fb"/>
+    ${eyesSVG("dots","#2c5a8f",39,61,58)}${mouthSVG("smile")}`),
+  jake:()=>svgTag(`<ellipse cx="14" cy="50" rx="12" ry="18" fill="#dd9c34"/>
+    <ellipse cx="86" cy="50" rx="12" ry="18" fill="#dd9c34"/>
+    ${baseSkin("#f0bd4d")}
+    <ellipse cx="50" cy="69" rx="9" ry="6" fill="#3a2c1a"/>
+    ${eyesSVG("big","#26303e",38,62,50)}`),
+  bmo:()=>svgTag(`<rect x="9" y="11" width="82" height="80" rx="14" fill="#77d3ae" stroke="#4fae8a" stroke-width="3"/>
+    <rect x="21" y="25" width="58" height="40" rx="6" fill="#3c8f72"/>
+    <circle cx="39" cy="44" r="4.4" fill="#eafff5"/><circle cx="61" cy="44" r="4.4" fill="#eafff5"/>
+    <path d="M40 55 Q50 61 60 55" stroke="#eafff5" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="27" cy="76" r="4" fill="#3c8f72"/><circle cx="40" cy="76" r="4" fill="#3c8f72"/>
+    <rect x="52" y="72" width="24" height="8" rx="4" fill="#3c8f72"/>`),
+  pb:()=>svgTag(`${baseSkin("#f8c7dd")}
+    <path d="M23 33 Q15 5 50 5 Q85 5 77 33 Q63 17 50 24 Q37 17 23 33Z" fill="#ef8fb8"/>
+    <circle cx="50" cy="15" r="5.5" fill="#ef8fb8"/>
+    ${eyesSVG("dots","#7a3b57",38,62,56)}${mouthSVG("smile","#7a3b57")}${blushSVG()}`),
+  marceline:()=>svgTag(`<path d="M7 40 Q3 1 50 1 Q97 1 93 40 L89 88 L78 58 L70 90 L58 58 L50 90 L42 58 L30 90 L22 58 L11 88Z" fill="#231f2b"/>
+    ${baseSkin("#c9c4d4",42,42,50,50)}
+    ${eyesSVG("red","#df4a42",38,62,52)}${mouthSVG("fangs","#5a4a5c")}`),
+  iceking:()=>svgTag(`${baseSkin("#8fd3ef")}
+    <path d="M13 42 Q50 96 87 42 Q81 74 50 82 Q19 74 13 42Z" fill="#eef6fa"/>
+    <path d="M15 34 L23 8 L38 24 L50 4 L62 24 L77 8 L85 34Z" fill="#f0c53e"/>
+    <circle cx="50" cy="17" r="4.2" fill="#d4453f"/>
+    ${eyesSVG("dots","#1c4a63",38,62,44)}`),
+  gunter:()=>svgTag(`${baseSkin("#2e3844")}
+    <ellipse cx="50" cy="66" rx="23" ry="24" fill="#f4f6f8"/>
+    <path d="M44 58 L56 58 L50 68Z" fill="#f0a53c"/>
+    ${eyesSVG("dots","#0d1116",40,60,42)}`),
+  lsp:()=>svgTag(`<circle cx="25" cy="66" r="15" fill="#a67dc7"/><circle cx="75" cy="66" r="15" fill="#a67dc7"/>
+    <circle cx="31" cy="30" r="17" fill="#a67dc7"/><circle cx="69" cy="30" r="17" fill="#a67dc7"/>
+    ${baseSkin("#b489d1",33,33,50,50)}
+    <path d="M41 16 L45 24 L53 22 L49 30 L57 32 L49 36" stroke="#f0c53e" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    ${eyesSVG("dots","#4a2f63",40,60,54)}${mouthSVG("flat","#4a2f63")}`),
+  death:()=>svgTag(`<path d="M7 50 Q3 -2 50 -2 Q97 -2 93 50 L83 92 L17 92Z" fill="#241f2e"/>
+    <ellipse cx="50" cy="56" rx="28" ry="30" fill="#d9d3cf"/>
+    ${eyesSVG("x","#241f2e",38,62,54)}
+    <path d="M44 72 L56 72" stroke="#241f2e" stroke-width="3" stroke-linecap="round"/>`),
+  prismo:()=>svgTag(`<rect x="14" y="14" width="72" height="72" rx="26" fill="#ff83aa"/>
+    <path d="M14 50 L86 50 M50 14 L50 86" stroke="#ffb0c8" stroke-width="2" opacity=".6"/>
+    <rect x="30" y="48" width="40" height="10" rx="5" fill="#241f2e"/>${mouthSVG("flat","#241f2e")}`),
+  treetrunks:()=>svgTag(`<ellipse cx="16" cy="48" rx="15" ry="20" fill="#a49c88"/><ellipse cx="84" cy="48" rx="15" ry="20" fill="#a49c88"/>
+    ${baseSkin("#b0a892")}
+    <path d="M46 70 Q40 88 50 90 Q60 88 54 70" fill="none" stroke="#8f8570" stroke-width="6" stroke-linecap="round"/>
+    <path d="M50 8 L58 3 L58 13Z" fill="#e56ea0"/>
+    ${eyesSVG("dots","#4a4436",40,60,50)}${mouthSVG("smile","#4a4436")}`),
+  flame:()=>svgTag(`<path d="M16 42 Q12 12 30 3 Q27 20 38 9 Q36 24 50 5 Q48 22 62 11 Q60 26 74 7 Q78 18 84 42Z" fill="#ffb648"/>
+    ${baseSkin("#ff7a52")}
+    ${eyesSVG("dots","#7a1c10",38,62,58)}${mouthSVG("smile","#7a1c10")}`),
+  lemongrab:()=>svgTag(`<ellipse cx="50" cy="52" rx="28" ry="44" fill="#eee05b"/>
+    <path d="M22 82 Q50 94 78 82 L72 68 Q50 76 28 68Z" fill="#d8ca42"/>
+    ${eyesSVG("dots","#6b6222",38,62,46)}${mouthSVG("flat","#6b6222")}`)
+};
+
+function characterSVG(id){
+  if(BESPOKE[id]) return BESPOKE[id]();
+  const a=AVATAR[id]||{};
+  const skin=a.skin||CHAR[id]?.[1]||"#e6dfce";
+  return svgTag(`${baseSkin(skin)}
+    ${a.topper?topperSVG(a.topper,a.topperColor||"#fff","#c99a2e"):""}
+    ${a.blush?blushSVG():""}
+    ${eyesSVG(a.eyes||"dots")}
+    ${mouthSVG(a.mouth||"smile")}`);
+}
+
 const sceneOrder = ["treehouse","candy","forest","marceline","ice","fire","lemon","wilds","prismo"];
 
 const SCENES = {
@@ -187,11 +336,11 @@ function renderScene(){
   updateHud();
 }
 function addCharacter(id,x,y){
-  const [name,color,initials]=CHAR[id];
+  const [name]=CHAR[id];
   const b=document.createElement("button");
   b.className="hotspot"+(state.completed[id]?" done":"");
   b.style.setProperty("--x",x+"%");b.style.setProperty("--y",y+"%");
-  b.innerHTML=`<div class="character-figure" style="--c:${color}">${initials}</div><div class="hotspot-label">${name}</div>`;
+  b.innerHTML=`<div class="character-figure">${characterSVG(id)}</div><div class="hotspot-label">${name}</div>`;
   b.onclick=()=>talk(id);hotspots.appendChild(b)
 }
 function addObject(id,icon,label,x,y){
@@ -202,9 +351,9 @@ function addObject(id,icon,label,x,y){
 }
 
 function showDialog(id,text,actions=[]){
-  const [name,color,initials]=CHAR[id];
+  const [name]=CHAR[id];
   openModal(`<div class="dialog-head">
-    <div class="portrait" style="--c:${color}">${initials}</div>
+    <div class="portrait">${characterSVG(id)}</div>
     <div><div class="dialog-name">${name}</div><div class="dialog-sub">${SCENES[state.scene].title}</div></div>
   </div>
   <div class="dialog-text">${text}</div>
