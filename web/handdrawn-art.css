@@ -1,0 +1,45 @@
+/* Daughter's hand-drawn art layer. Keep the original marker/pencil character visible. */
+.character-art {
+  width: clamp(62px, 6.6vw, 94px);
+  height: clamp(86px, 9.4vw, 128px);
+  filter: drop-shadow(0 7px 4px rgba(0,0,0,.22));
+}
+
+.handdrawn-sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.art-hotspot:hover .handdrawn-sprite,
+.art-hotspot:focus-visible .handdrawn-sprite {
+  animation: handdrawnHello .38s ease-in-out;
+}
+
+@keyframes handdrawnHello {
+  0%,100% { transform: rotate(0deg) scale(1); }
+  35% { transform: rotate(-2deg) scale(1.035); }
+  70% { transform: rotate(2deg) scale(1.035); }
+}
+
+.portrait-art { width: 92px; height: 116px; }
+.object-art .handdrawn-sprite { width: 100%; height: 100%; }
+
+.character-art:has(.handdrawn-lady),
+.character-art:has(.handdrawn-jake),
+.character-art:has(.handdrawn-lsp),
+.character-art:has(.handdrawn-kingworm) {
+  width: clamp(72px, 7.8vw, 108px);
+}
+
+@media (max-width: 760px) {
+  .character-art { width: 58px; height: 84px; }
+  .character-art:has(.handdrawn-lady),
+  .character-art:has(.handdrawn-jake),
+  .character-art:has(.handdrawn-lsp),
+  .character-art:has(.handdrawn-kingworm) { width: 68px; }
+  .portrait-art { width: 78px; height: 100px; }
+}
