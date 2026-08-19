@@ -1,60 +1,23 @@
-/* Daughter's hand-drawn art layer. Larger figures, cleaned at runtime like a magic-wand cutout. */
+/* Daughter's hand-drawn art. Larger figures, no rectangular crop masks. */
 .character-art {
-  width: clamp(110px, 10vw, 170px);
-  height: clamp(120px, 11vw, 185px);
+  width: clamp(120px, 11vw, 185px);
+  height: clamp(132px, 12vw, 200px);
   display:flex;
   align-items:flex-end;
   justify-content:center;
-  filter: drop-shadow(0 7px 4px rgba(0,0,0,.20));
+  filter:drop-shadow(0 7px 4px rgba(0,0,0,.20));
 }
-
 .handdrawn-sprite {
   display:block;
   width:100%;
   height:100%;
   object-fit:contain;
-  overflow:hidden;
   user-select:none;
   -webkit-user-drag:none;
 }
-
-.art-hotspot:hover .handdrawn-sprite,
-.art-hotspot:focus-visible .handdrawn-sprite { animation: handdrawnHello .38s ease-in-out; }
-
-@keyframes handdrawnHello {
-  0%,100% { transform: rotate(0deg) scale(1); }
-  35% { transform: rotate(-2deg) scale(1.04); }
-  70% { transform: rotate(2deg) scale(1.04); }
-}
-
-/* Long/wide characters were especially microscopic before. */
-.character-art:has(.handdrawn-lady),
-.character-art:has(.handdrawn-shelby),
-.character-art:has(.handdrawn-lsp),
-.character-art:has(.handdrawn-kingworm) {
-  width: clamp(135px, 12vw, 205px);
-  height: clamp(130px, 11vw, 190px);
-}
-
-.portrait-art {
-  width:135px;
-  height:145px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.portrait-art .handdrawn-sprite { width:135px; height:135px; }
-.object-art .handdrawn-sprite { width:100%; height:100%; }
-
-/* No technical/legal footnote inside game dialogs. */
-.note { display:none !important; }
-
-@media (max-width:760px) {
-  .character-art { width:94px; height:110px; }
-  .character-art:has(.handdrawn-lady),
-  .character-art:has(.handdrawn-shelby),
-  .character-art:has(.handdrawn-lsp),
-  .character-art:has(.handdrawn-kingworm) { width:116px; height:112px; }
-  .portrait-art { width:105px; height:115px; }
-  .portrait-art .handdrawn-sprite { width:105px; height:105px; }
-}
+.art-hotspot:hover .handdrawn-sprite,.art-hotspot:focus-visible .handdrawn-sprite{animation:handdrawnHello .38s ease-in-out}
+@keyframes handdrawnHello{0%,100%{transform:rotate(0) scale(1)}35%{transform:rotate(-2deg) scale(1.04)}70%{transform:rotate(2deg) scale(1.04)}}
+.character-art:has(.handdrawn-lady),.character-art:has(.handdrawn-shelby),.character-art:has(.handdrawn-lsp),.character-art:has(.handdrawn-kingworm){width:clamp(145px,13vw,220px);height:clamp(138px,12vw,205px)}
+.portrait-art{width:145px;height:155px;display:flex;align-items:center;justify-content:center}.portrait-art .handdrawn-sprite{width:145px;height:145px}.object-art .handdrawn-sprite{width:100%;height:100%}
+.note{display:none!important}
+@media(max-width:760px){.character-art{width:100px;height:116px}.character-art:has(.handdrawn-lady),.character-art:has(.handdrawn-shelby),.character-art:has(.handdrawn-lsp),.character-art:has(.handdrawn-kingworm){width:122px;height:120px}.portrait-art{width:110px;height:120px}.portrait-art .handdrawn-sprite{width:110px;height:110px}}
