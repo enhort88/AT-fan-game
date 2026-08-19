@@ -32,7 +32,7 @@
     const [col, row] = pos;
     const w = COLS * CELL;
     const h = ROWS * CELL;
-    return `<svg class="handdrawn-sprite handdrawn-${kind} handdrawn-${id}" viewBox="0 0 ${CELL} ${CELL}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><image href="${ATLAS}" x="${-col * CELL}" y="${-row * CELL}" width="${w}" height="${h}" preserveAspectRatio="none"/></svg>`;
+    return `<svg class="handdrawn-sprite handdrawn-${kind} handdrawn-${id}" viewBox="0 0 ${CELL} ${CELL}" overflow="hidden" style="overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><image href="${ATLAS}" x="${-col * CELL}" y="${-row * CELL}" width="${w}" height="${h}" preserveAspectRatio="none"/></svg>`;
   }
 
   AT_ART.characterArt = id => characters[id] ? sprite(characters[id], id, 'character') : oldCharacterArt(id);
