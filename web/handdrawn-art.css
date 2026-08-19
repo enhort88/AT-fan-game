@@ -1,85 +1,60 @@
-/* Daughter's hand-drawn art layer. Keep the original marker/pencil character visible. */
+/* Daughter's hand-drawn art layer. Larger figures, cleaned at runtime like a magic-wand cutout. */
 .character-art {
-  width: clamp(62px, 6.6vw, 94px);
-  height: clamp(86px, 9.4vw, 128px);
-  filter: drop-shadow(0 7px 4px rgba(0,0,0,.22));
+  width: clamp(110px, 10vw, 170px);
+  height: clamp(120px, 11vw, 185px);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  filter: drop-shadow(0 7px 4px rgba(0,0,0,.20));
 }
 
 .handdrawn-sprite {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-drag: none;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  overflow:hidden;
+  user-select:none;
+  -webkit-user-drag:none;
 }
 
 .art-hotspot:hover .handdrawn-sprite,
-.art-hotspot:focus-visible .handdrawn-sprite {
-  animation: handdrawnHello .38s ease-in-out;
-}
+.art-hotspot:focus-visible .handdrawn-sprite { animation: handdrawnHello .38s ease-in-out; }
 
 @keyframes handdrawnHello {
   0%,100% { transform: rotate(0deg) scale(1); }
-  35% { transform: rotate(-2deg) scale(1.035); }
-  70% { transform: rotate(2deg) scale(1.035); }
+  35% { transform: rotate(-2deg) scale(1.04); }
+  70% { transform: rotate(2deg) scale(1.04); }
 }
 
-.portrait-art { width: 92px; height: 116px; }
-.object-art .handdrawn-sprite { width: 100%; height: 100%; }
-
+/* Long/wide characters were especially microscopic before. */
 .character-art:has(.handdrawn-lady),
-.character-art:has(.handdrawn-jake),
+.character-art:has(.handdrawn-shelby),
 .character-art:has(.handdrawn-lsp),
 .character-art:has(.handdrawn-kingworm) {
-  width: clamp(72px, 7.8vw, 108px);
+  width: clamp(135px, 12vw, 205px);
+  height: clamp(130px, 11vw, 190px);
 }
 
-/* This repeated technical footnote spoiled the game feel. Keep legal/project notes out of dialogs. */
-.note { display: none !important; }
+.portrait-art {
+  width:135px;
+  height:145px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.portrait-art .handdrawn-sprite { width:135px; height:135px; }
+.object-art .handdrawn-sprite { width:100%; height:100%; }
 
-/* Tight masks remove scan/crop debris around the actual drawing in each atlas cell. */
-.handdrawn-jake { clip-path: inset(1.6% 7.8% 1.6% 7.8%); }
-.handdrawn-finn { clip-path: inset(1.6% 23.4% 1.6% 23.4%); }
-.handdrawn-bmo { clip-path: inset(1.6% 7.8% 1.6% 7.8%); }
-.handdrawn-neptr { clip-path: inset(6.2% 1.6% 1.6% 1.6%); }
-.handdrawn-shelby { clip-path: inset(6.2% 1.6% 1.6% 1.6%); }
-.handdrawn-lady { clip-path: inset(1.6% 10.9% 1.6% 10.9%); }
-.handdrawn-pb { clip-path: inset(1.6% 28.1% 1.6% 26.6%); }
-.handdrawn-peppermint { clip-path: inset(1.6% 9.4% 1.6% 9.4%); }
-.handdrawn-banana { clip-path: inset(1.6% 25.0% 1.6% 25.0%); }
-.handdrawn-rootbeer { clip-path: inset(1.6% 21.9% 1.6% 21.9%); }
-.handdrawn-turtle { clip-path: inset(1.6% 21.9% 1.6% 21.9%); }
-.handdrawn-treetrunks { clip-path: inset(6.2% 1.6% 1.6% 1.6%); }
-.handdrawn-mrpig { clip-path: inset(1.6% 10.9% 1.6% 10.9%); }
-.handdrawn-huntress { clip-path: inset(1.6% 25.0% 1.6% 25.0%); }
-.handdrawn-cinnamon { clip-path: inset(9.4% 1.6% 1.6% 1.6%); }
-.handdrawn-choosegoose { clip-path: inset(1.6% 21.9% 1.6% 21.9%); }
-.handdrawn-magicman { clip-path: inset(1.6% 20.3% 1.6% 20.3%); }
-.handdrawn-marceline { clip-path: inset(1.6% 6.2% 1.6% 4.7%); }
-.handdrawn-lsp { clip-path: inset(7.8% 1.6% 1.6% 1.6%); }
-.handdrawn-death { clip-path: inset(1.6% 31.2% 1.6% 31.2%); }
-.handdrawn-iceking { clip-path: inset(1.6% 17.2% 1.6% 17.2%); }
-.handdrawn-gunter { clip-path: inset(1.6% 9.4% 1.6% 9.4%); }
-.handdrawn-abracadaniel { clip-path: inset(1.6% 14.1% 1.6% 14.1%); }
-.handdrawn-flame { clip-path: inset(1.6% 25.0% 1.6% 25.0%); }
-.handdrawn-flambo { clip-path: inset(1.6% 15.6% 1.6% 15.6%); }
-.handdrawn-lemongrab { clip-path: inset(1.6% 29.7% 1.6% 29.7%); }
-.handdrawn-kingworm { clip-path: inset(1.6% 12.5% 1.6% 12.5%); }
-.handdrawn-billy { clip-path: inset(1.6% 23.4% 1.6% 23.4%); }
-.handdrawn-prismo { clip-path: inset(1.6% 7.8% 1.6% 7.8%); }
-.handdrawn-cosmicowl { clip-path: inset(34.4% 1.6% 1.6% 1.6%); }
-.handdrawn-lemonhope { clip-path: inset(1.6% 17.2% 1.6% 15.6%); }
-.handdrawn-mushroom { clip-path: inset(1.6% 7.8% 1.6% 7.8%); }
-.handdrawn-chest { clip-path: inset(20.3% 1.6% 1.6% 1.6%); }
-.handdrawn-basspick { clip-path: inset(1.6% 23.4% 1.6% 23.4%); }
-.handdrawn-potion { clip-path: inset(1.6% 7.8% 1.6% 7.8%); }
+/* No technical/legal footnote inside game dialogs. */
+.note { display:none !important; }
 
-@media (max-width: 760px) {
-  .character-art { width: 58px; height: 84px; }
+@media (max-width:760px) {
+  .character-art { width:94px; height:110px; }
   .character-art:has(.handdrawn-lady),
-  .character-art:has(.handdrawn-jake),
+  .character-art:has(.handdrawn-shelby),
   .character-art:has(.handdrawn-lsp),
-  .character-art:has(.handdrawn-kingworm) { width: 68px; }
-  .portrait-art { width: 78px; height: 100px; }
+  .character-art:has(.handdrawn-kingworm) { width:116px; height:112px; }
+  .portrait-art { width:105px; height:115px; }
+  .portrait-art .handdrawn-sprite { width:105px; height:105px; }
 }
