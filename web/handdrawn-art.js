@@ -7,7 +7,7 @@
     return;
   }
 
-  const CELL = 256;
+  const CELL = 192;
   const COLS = 5;
   const ROWS = 7;
   const atlas = new Image();
@@ -32,7 +32,7 @@
   const entryFor = (id, kind) => kind === 'character' ? characters[id] : objects[id];
 
   function markup(id, kind) {
-    return `<canvas class="handdrawn-sprite handdrawn-${kind} handdrawn-${id}" data-handdrawn-id="${id}" data-handdrawn-kind="${kind}" width="256" height="256" aria-hidden="true"></canvas>`;
+    return `<canvas class="handdrawn-sprite handdrawn-${kind} handdrawn-${id}" data-handdrawn-id="${id}" data-handdrawn-kind="${kind}" width="192" height="192" aria-hidden="true"></canvas>`;
   }
 
   function paint(el) {
@@ -45,11 +45,7 @@
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, CELL, CELL);
-    ctx.drawImage(
-      atlas,
-      col * CELL, row * CELL, CELL, CELL,
-      0, 0, CELL, CELL
-    );
+    ctx.drawImage(atlas, col * CELL, row * CELL, CELL, CELL, 0, 0, CELL, CELL);
     el.dataset.painted = '1';
   }
 
@@ -64,6 +60,7 @@
     const expectedH = ROWS * CELL;
     if (atlas.naturalWidth !== expectedW || atlas.naturalHeight !== expectedH) {
       console.error(`[AT] Unexpected HD atlas size ${atlas.naturalWidth}x${atlas.naturalHeight}, expected ${expectedW}x${expectedH}`);
+      return;
     }
     ready = true;
     paintAll();
