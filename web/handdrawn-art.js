@@ -30,6 +30,43 @@
     mushroom:[1,6], chest:[2,6], basspick:[3,6], potion:[4,6]
   };
 
+  // Keep the daughter's original drawings, only restore some of the color and
+  // contrast lost by photographing/scanning and WebP compression.
+  const DEFAULT_GRADE = {sat:1.24, contrast:1.08, brightness:1.025};
+  const COLOR_GRADE = {
+    finn:       {sat:1.30, contrast:1.10, brightness:1.035},
+    jake:       {sat:1.38, contrast:1.10, brightness:1.025},
+    bmo:        {sat:1.34, contrast:1.11, brightness:1.025},
+    neptr:      {sat:1.15, contrast:1.14, brightness:1.020},
+    shelby:     {sat:1.22, contrast:1.08, brightness:1.035},
+    lady:       {sat:1.35, contrast:1.09, brightness:1.035},
+    pb:         {sat:1.36, contrast:1.09, brightness:1.030},
+    peppermint: {sat:1.26, contrast:1.10, brightness:1.020},
+    banana:     {sat:1.34, contrast:1.09, brightness:1.025},
+    rootbeer:   {sat:1.23, contrast:1.10, brightness:1.020},
+    turtle:     {sat:1.28, contrast:1.09, brightness:1.020},
+    treetrunks: {sat:1.28, contrast:1.08, brightness:1.030},
+    mrpig:      {sat:1.30, contrast:1.08, brightness:1.030},
+    huntress:   {sat:1.28, contrast:1.10, brightness:1.020},
+    cinnamon:   {sat:1.26, contrast:1.08, brightness:1.030},
+    choosegoose:{sat:1.30, contrast:1.09, brightness:1.025},
+    magicman:   {sat:1.25, contrast:1.10, brightness:1.020},
+    marceline:  {sat:1.18, contrast:1.13, brightness:1.010},
+    lsp:        {sat:1.34, contrast:1.09, brightness:1.025},
+    death:      {sat:1.10, contrast:1.14, brightness:1.015},
+    iceking:    {sat:1.28, contrast:1.11, brightness:1.025},
+    gunter:     {sat:1.10, contrast:1.14, brightness:1.015},
+    abracadaniel:{sat:1.25, contrast:1.09, brightness:1.025},
+    flame:      {sat:1.38, contrast:1.10, brightness:1.030},
+    flambo:     {sat:1.40, contrast:1.10, brightness:1.030},
+    lemongrab:  {sat:1.34, contrast:1.11, brightness:1.020},
+    kingworm:   {sat:1.30, contrast:1.09, brightness:1.025},
+    billy:      {sat:1.20, contrast:1.11, brightness:1.020},
+    prismo:     {sat:1.32, contrast:1.09, brightness:1.030},
+    cosmicowl:  {sat:1.22, contrast:1.10, brightness:1.020},
+    lemonhope:  {sat:1.30, contrast:1.09, brightness:1.025}
+  };
+
   const oldCharacterArt = AT_ART.characterArt.bind(AT_ART);
   const oldItemArt = AT_ART.itemArt.bind(AT_ART);
   const entryFor = (id, kind) => kind === 'character' ? characters[id] : objects[id];
@@ -48,11 +85,6 @@
   }
 
   function makeAtlasBlobUrl(base64) {
-    /*
-     * atlas-part files may contain stale data after the real WebP. A normal
-     * data: URL then becomes undecodable in some browsers. RIFF stores the
-     * exact file size in bytes 4..7, so extract only the first complete WebP.
-     */
     const compact = base64.replace(/\s+/g, '');
     const header = atob(compact.slice(0, 64));
 
@@ -75,9 +107,25 @@
     return URL.createObjectURL(new Blob([bytes], {type:'image/webp'}));
   }
 
+  function applyVisualGrade(el, id, kind) {
+    if (kind !== 'character') {
+      el.style.filter = 'saturate(1.18) contrast(1.06) brightness(1.02)';
+      return;
+    }
+
+    const g = COLOR_GRADE[id] || DEFAULT_GRADE;
+    el.style.filter =
+      `saturate(${g.sat}) contrast(${g.contrast}) brightness(${g.brightness}) ` +
+      'drop-shadow(.55px 0 0 rgba(29,35,47,.24)) ' +
+      'drop-shadow(-.55px 0 0 rgba(29,35,47,.24)) ' +
+      'drop-shadow(0 .55px 0 rgba(29,35,47,.20))';
+  }
+
   function paint(el) {
     if (!ready || el.dataset.painted === '1') return;
-    const p = entryFor(el.dataset.handdrawnId, el.dataset.handdrawnKind);
+    const id = el.dataset.handdrawnId;
+    const kind = el.dataset.handdrawnKind;
+    const p = entryFor(id, kind);
     if (!p) return;
 
     const [col, row] = p;
@@ -96,6 +144,7 @@
       OUTPUT_SIZE,
       OUTPUT_SIZE
     );
+    applyVisualGrade(el, id, kind);
     el.dataset.painted = '1';
   }
 
