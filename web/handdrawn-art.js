@@ -1,21 +1,88 @@
 (() => {
-  const CELL=64, atlasBase64=window.__AT_HANDDRAWN_ATLAS||'';
-  if(!atlasBase64||!window.AT_ART)return;
-  const ATLAS='data:image/webp;base64,'+atlasBase64; delete window.__AT_HANDDRAWN_ATLAS;
-  const characters={jake:[0,0],finn:[1,0],bmo:[2,0],neptr:[3,0],shelby:[4,0],lady:[0,1],pb:[1,1],peppermint:[2,1],banana:[3,1],rootbeer:[4,1],turtle:[0,2],treetrunks:[1,2],mrpig:[2,2],huntress:[3,2],cinnamon:[4,2],choosegoose:[0,3],magicman:[1,3],marceline:[2,3],lsp:[3,3],death:[4,3],iceking:[0,4],gunter:[1,4],abracadaniel:[2,4],flame:[3,4],flambo:[4,4],lemongrab:[0,5],kingworm:[1,5],billy:[2,5],prismo:[3,5],cosmicowl:[4,5],lemonhope:[0,6]};
-  const objects={mushroom:[1,6],chest:[2,6],basspick:[3,6],potion:[4,6]};
-  const oldCharacterArt=AT_ART.characterArt.bind(AT_ART),oldItemArt=AT_ART.itemArt.bind(AT_ART),atlas=new Image();let ready=false;
-  const pos=(id,k)=>k==='character'?characters[id]:objects[id];
-  const markup=(id,k)=>`<canvas class="handdrawn-sprite handdrawn-${k} handdrawn-${id}" data-handdrawn-id="${id}" data-handdrawn-kind="${k}" width="128" height="128" aria-hidden="true"></canvas>`;
-  function cleanCell(p){
-    const [col,row]=p,w=document.createElement('canvas');w.width=CELL;w.height=CELL;const c=w.getContext('2d',{willReadFrequently:true});c.drawImage(atlas,col*CELL,row*CELL,CELL,CELL,0,0,CELL,CELL);const im=c.getImageData(0,0,CELL,CELL),d=im.data,n=CELL*CELL;
-    const bg=new Uint8Array(n),q=[];const paper=i=>{const a=d[i*4+3],r=d[i*4],g=d[i*4+1],b=d[i*4+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);return a<45||(mx>218&&mx-mn<34)};const push=i=>{if(i>=0&&i<n&&!bg[i]&&paper(i)){bg[i]=1;q.push(i)}};
-    for(let x=0;x<CELL;x++){push(x);push((CELL-1)*CELL+x)}for(let y=0;y<CELL;y++){push(y*CELL);push(y*CELL+CELL-1)}for(let k=0;k<q.length;k++){const i=q[k],x=i%CELL,y=(i/CELL)|0;if(x)push(i-1);if(x<CELL-1)push(i+1);if(y)push(i-CELL);if(y<CELL-1)push(i+CELL)}for(let i=0;i<n;i++)if(bg[i])d[i*4+3]=0;
-    const fg=new Uint8Array(n),seen=new Uint8Array(n),stack=[],comps=[];for(let i=0;i<n;i++)fg[i]=d[i*4+3]>=135?1:0;
-    for(let s=0;s<n;s++){if(!fg[s]||seen[s])continue;const comp=[];stack.push(s);seen[s]=1;while(stack.length){const i=stack.pop();comp.push(i);const x=i%CELL,y=(i/CELL)|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const nx=x+dx,ny=y+dy;if(nx<0||nx>=CELL||ny<0||ny>=CELL)continue;const j=ny*CELL+nx;if(fg[j]&&!seen[j]){seen[j]=1;stack.push(j)}}}comps.push(comp)}
-    comps.sort((a,b)=>b.length-a.length);if(comps.length){const largest=comps[0].length,keep=new Uint8Array(n);for(const comp of comps)if(comp.length>=largest*.10)for(const i of comp)keep[i]=1;for(let pass=0;pass<2;pass++){const add=[];for(let i=0;i<n;i++)if(keep[i]){const x=i%CELL,y=(i/CELL)|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const nx=x+dx,ny=y+dy;if(nx>=0&&nx<CELL&&ny>=0&&ny<CELL)add.push(ny*CELL+nx)}}for(const i of add)keep[i]=1}for(let i=0;i<n;i++)if(!keep[i])d[i*4+3]=0}c.putImageData(im,0,0);return w;
+  if (!window.AT_ART) return;
+
+  const LOW_CELL = 64;
+  const HD_CELL = 256;
+  const lowBase64 = window.__AT_HANDDRAWN_ATLAS || '';
+  const lowAtlas = new Image();
+  const hdAtlas = new Image();
+  let lowReady = false;
+  let hdReady = false;
+
+  const hdCharacters = {
+    finn:[0,0], jake:[1,0], bmo:[2,0], pb:[3,0], marceline:[4,0],
+    iceking:[0,1], gunter:[1,1], lemongrab:[2,1], flame:[3,1], prismo:[4,1],
+    lady:[0,2], lsp:[1,2], shelby:[2,2], mrpig:[3,2], treetrunks:[4,2]
+  };
+
+  const lowCharacters = {
+    neptr:[3,0], peppermint:[2,1], banana:[3,1], rootbeer:[4,1],
+    turtle:[0,2], huntress:[3,2], cinnamon:[4,2], choosegoose:[0,3],
+    magicman:[1,3], death:[4,3], abracadaniel:[2,4], flambo:[4,4],
+    kingworm:[1,5], billy:[2,5], cosmicowl:[4,5], lemonhope:[0,6]
+  };
+
+  const lowObjects = {
+    mushroom:[1,6], chest:[2,6], basspick:[3,6], potion:[4,6]
+  };
+
+  const oldCharacterArt = AT_ART.characterArt.bind(AT_ART);
+  const oldItemArt = AT_ART.itemArt.bind(AT_ART);
+
+  function markup(id, kind, source) {
+    return `<canvas class="handdrawn-sprite handdrawn-${kind} handdrawn-${id}" data-handdrawn-id="${id}" data-handdrawn-kind="${kind}" data-handdrawn-source="${source}" width="256" height="256" aria-hidden="true"></canvas>`;
   }
-  function paint(el){if(!ready||el.dataset.painted==='1')return;const p=pos(el.dataset.handdrawnId,el.dataset.handdrawnKind);if(!p)return;const src=cleanCell(p),c=el.getContext('2d');c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.clearRect(0,0,128,128);c.drawImage(src,0,0,CELL,CELL,0,0,128,128);el.dataset.painted='1'}
-  const paintAll=()=>document.querySelectorAll('canvas.handdrawn-sprite').forEach(paint);new MutationObserver(paintAll).observe(document.documentElement,{childList:true,subtree:true});atlas.onload=()=>{ready=true;paintAll()};atlas.src=ATLAS;
-  AT_ART.characterArt=id=>characters[id]?markup(id,'character'):oldCharacterArt(id);AT_ART.itemArt=id=>objects[id]?markup(id,'item'):oldItemArt(id);window.AT_HANDDRAWN={characters,objects,paintAll};
+
+  function paint(el) {
+    if (el.dataset.painted === '1') return;
+    const id = el.dataset.handdrawnId;
+    const kind = el.dataset.handdrawnKind;
+    const source = el.dataset.handdrawnSource;
+    const ctx = el.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.clearRect(0, 0, 256, 256);
+
+    if (source === 'hd') {
+      if (!hdReady) return;
+      const p = hdCharacters[id];
+      if (!p) return;
+      ctx.drawImage(hdAtlas, p[0]*HD_CELL, p[1]*HD_CELL, HD_CELL, HD_CELL, 0, 0, 256, 256);
+      el.dataset.painted = '1';
+      return;
+    }
+
+    if (!lowReady) return;
+    const p = kind === 'character' ? lowCharacters[id] : lowObjects[id];
+    if (!p) return;
+    ctx.drawImage(lowAtlas, p[0]*LOW_CELL, p[1]*LOW_CELL, LOW_CELL, LOW_CELL, 0, 0, 256, 256);
+    el.dataset.painted = '1';
+  }
+
+  function paintAll() {
+    document.querySelectorAll('canvas.handdrawn-sprite').forEach(paint);
+  }
+
+  new MutationObserver(paintAll).observe(document.documentElement, {childList:true, subtree:true});
+
+  if (lowBase64) {
+    lowAtlas.onload = () => { lowReady = true; paintAll(); };
+    lowAtlas.src = 'data:image/webp;base64,' + lowBase64;
+    delete window.__AT_HANDDRAWN_ATLAS;
+  }
+
+  hdAtlas.onload = () => { hdReady = true; paintAll(); };
+  hdAtlas.src = 'assets/handdrawn-hd-part1.webp';
+
+  AT_ART.characterArt = id => hdCharacters[id]
+    ? markup(id, 'character', 'hd')
+    : lowCharacters[id]
+      ? markup(id, 'character', 'low')
+      : oldCharacterArt(id);
+
+  AT_ART.itemArt = id => lowObjects[id]
+    ? markup(id, 'item', 'low')
+    : oldItemArt(id);
+
+  window.AT_HANDDRAWN = {hdCharacters, lowCharacters, lowObjects, paintAll};
 })();
