@@ -1,50 +1,55 @@
 (() => {
   if (!window.AT_ART) return;
 
+  const atlasBase64 = window.__AT_HANDDRAWN_ATLAS || '';
+  if (!atlasBase64) {
+    console.error('[AT] HD hand-drawn atlas is missing');
+    return;
+  }
+
   const CELL = 256;
-  const atlas1 = new Image();
-  const atlas2 = new Image();
-  let ready1 = false;
-  let ready2 = false;
+  const COLS = 5;
+  const ROWS = 7;
+  const atlas = new Image();
+  let ready = false;
 
   const characters = {
-    finn:{a:1,p:[0,0]}, jake:{a:1,p:[1,0]}, bmo:{a:1,p:[2,0]}, pb:{a:1,p:[3,0]}, marceline:{a:1,p:[4,0]},
-    iceking:{a:1,p:[0,1]}, gunter:{a:1,p:[1,1]}, lemongrab:{a:1,p:[2,1]}, flame:{a:1,p:[3,1]}, prismo:{a:1,p:[4,1]},
-    lady:{a:1,p:[0,2]}, lsp:{a:1,p:[1,2]}, shelby:{a:1,p:[2,2]}, mrpig:{a:1,p:[3,2]}, treetrunks:{a:1,p:[4,2]},
-
-    neptr:{a:2,p:[0,0]}, peppermint:{a:2,p:[1,0]}, banana:{a:2,p:[2,0]}, rootbeer:{a:2,p:[3,0]}, turtle:{a:2,p:[4,0]},
-    huntress:{a:2,p:[0,1]}, cinnamon:{a:2,p:[1,1]}, choosegoose:{a:2,p:[2,1]}, magicman:{a:2,p:[3,1]}, death:{a:2,p:[4,1]},
-    abracadaniel:{a:2,p:[0,2]}, flambo:{a:2,p:[1,2]}, kingworm:{a:2,p:[2,2]}, billy:{a:2,p:[3,2]}, cosmicowl:{a:2,p:[4,2]},
-    lemonhope:{a:2,p:[0,3]}
+    jake:[0,0], finn:[1,0], bmo:[2,0], neptr:[3,0], shelby:[4,0],
+    lady:[0,1], pb:[1,1], peppermint:[2,1], banana:[3,1], rootbeer:[4,1],
+    turtle:[0,2], treetrunks:[1,2], mrpig:[2,2], huntress:[3,2], cinnamon:[4,2],
+    choosegoose:[0,3], magicman:[1,3], marceline:[2,3], lsp:[3,3], death:[4,3],
+    iceking:[0,4], gunter:[1,4], abracadaniel:[2,4], flame:[3,4], flambo:[4,4],
+    lemongrab:[0,5], kingworm:[1,5], billy:[2,5], prismo:[3,5], cosmicowl:[4,5],
+    lemonhope:[0,6]
   };
-
   const objects = {
-    mushroom:{a:2,p:[1,3]}, chest:{a:2,p:[2,3]}, basspick:{a:2,p:[3,3]}, potion:{a:2,p:[4,3]}
+    mushroom:[1,6], chest:[2,6], basspick:[3,6], potion:[4,6]
   };
 
   const oldCharacterArt = AT_ART.characterArt.bind(AT_ART);
   const oldItemArt = AT_ART.itemArt.bind(AT_ART);
+
+  const entryFor = (id, kind) => kind === 'character' ? characters[id] : objects[id];
 
   function markup(id, kind) {
     return `<canvas class="handdrawn-sprite handdrawn-${kind} handdrawn-${id}" data-handdrawn-id="${id}" data-handdrawn-kind="${kind}" width="256" height="256" aria-hidden="true"></canvas>`;
   }
 
   function paint(el) {
-    if (el.dataset.painted === '1') return;
-    const id = el.dataset.handdrawnId;
-    const kind = el.dataset.handdrawnKind;
-    const entry = kind === 'character' ? characters[id] : objects[id];
-    if (!entry) return;
-    if (entry.a === 1 && !ready1) return;
-    if (entry.a === 2 && !ready2) return;
+    if (!ready || el.dataset.painted === '1') return;
+    const p = entryFor(el.dataset.handdrawnId, el.dataset.handdrawnKind);
+    if (!p) return;
 
-    const atlas = entry.a === 1 ? atlas1 : atlas2;
-    const [col,row] = entry.p;
+    const [col, row] = p;
     const ctx = el.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-    ctx.clearRect(0,0,CELL,CELL);
-    ctx.drawImage(atlas, col*CELL, row*CELL, CELL, CELL, 0,0,CELL,CELL);
+    ctx.clearRect(0, 0, CELL, CELL);
+    ctx.drawImage(
+      atlas,
+      col * CELL, row * CELL, CELL, CELL,
+      0, 0, CELL, CELL
+    );
     el.dataset.painted = '1';
   }
 
@@ -52,13 +57,26 @@
     document.querySelectorAll('canvas.handdrawn-sprite').forEach(paint);
   }
 
-  new MutationObserver(paintAll).observe(document.documentElement,{childList:true,subtree:true});
-  atlas1.onload = () => { ready1 = true; paintAll(); };
-  atlas2.onload = () => { ready2 = true; paintAll(); };
-  atlas1.src = 'assets/handdrawn-hd-part1.webp';
-  atlas2.src = 'assets/handdrawn-hd-part2.webp';
+  new MutationObserver(paintAll).observe(document.documentElement, {childList:true, subtree:true});
 
-  AT_ART.characterArt = id => characters[id] ? markup(id,'character') : oldCharacterArt(id);
-  AT_ART.itemArt = id => objects[id] ? markup(id,'item') : oldItemArt(id);
-  window.AT_HANDDRAWN = {characters,objects,paintAll};
+  atlas.onload = () => {
+    const expectedW = COLS * CELL;
+    const expectedH = ROWS * CELL;
+    if (atlas.naturalWidth !== expectedW || atlas.naturalHeight !== expectedH) {
+      console.error(`[AT] Unexpected HD atlas size ${atlas.naturalWidth}x${atlas.naturalHeight}, expected ${expectedW}x${expectedH}`);
+    }
+    ready = true;
+    paintAll();
+    delete window.__AT_HANDDRAWN_ATLAS;
+  };
+
+  atlas.onerror = () => {
+    console.error('[AT] Failed to decode HD hand-drawn atlas');
+  };
+
+  atlas.src = 'data:image/webp;base64,' + atlasBase64;
+
+  AT_ART.characterArt = id => characters[id] ? markup(id, 'character') : oldCharacterArt(id);
+  AT_ART.itemArt = id => objects[id] ? markup(id, 'item') : oldItemArt(id);
+  window.AT_HANDDRAWN = {characters, objects, paintAll};
 })();
